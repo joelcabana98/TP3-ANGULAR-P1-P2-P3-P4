@@ -1,0 +1,28 @@
+<h1>Pipes</h1>
+
+<p>{{cedears | json}}</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Simbolo</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Variacio</th>
+            <th scope="col">Precio Apertura</th>
+            <th scope="col">Precio Cierre</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Hora</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of cedears">
+            <td>{{item.simbolo | pipePersonalizado}}</td>
+            <td>{{item.nombre | titlecase}}</td>
+            <td>{{item.variacion | percent :'1.1-2'}}</td>
+            <td>{{item.precioApertura | currency: 'EUR' }}</td>
+            <td>{{item.precioCierre | currency: 'EUR' }}</td>
+            <td>{{item.fecha | date : 'dd-MM-yy'}}</td>
+            <td>{{item.fecha | date: 'shortTime' }}</td>
+        </tr>
+    </tbody>
+</table>
