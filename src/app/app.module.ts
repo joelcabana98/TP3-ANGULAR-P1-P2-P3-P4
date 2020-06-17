@@ -12,9 +12,9 @@ import { Punto1Component } from './components/punto1/punto1.component';
 import { Punto2Component } from './components/punto2/punto2.component';
 import { Punto3Component } from './components/punto3/punto3.component';
 import { AboutComponent } from './components/about/about.component';
-import { PipePersonalizadoPipe } from './pipes/pipe-personalizado.pipe';
-import { BooleanStringPipe } from './pipes/boolean-string.pipe';
 import { Punto4Component } from './components/punto4/punto4.component';
+
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -26,15 +26,14 @@ import { Punto4Component } from './components/punto4/punto4.component';
     Punto2Component,
     Punto3Component,
     AboutComponent,
-    PipePersonalizadoPipe,
-    BooleanStringPipe,
     Punto4Component
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    NgxDataTableModule
+    NgxDataTableModule,
+    HttpClientModule
   ],
   providers: [
 

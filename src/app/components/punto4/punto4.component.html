@@ -2,31 +2,78 @@
 
     <div class="form-group row">
         <label for="categoria" class="col-2">Tematica :</label>
-        <select id="categoria" name="categoria" [(ngModel)]="categoria" class="form-control form-control-sm col-3 ">
-            <option value="deportes" >Deporte</option>
-            <option value="animales">Animales</option>
+        <select id="categoria" name="categoria" [(ngModel)]="categoria" (ngModelChange)="cargarListaPalabra()" class="form-control form-control-sm col-3 ">
+            <option value="deporte" >Deporte</option>
+            <option value="animal">Animales</option>
         </select>
     </div>
     <button type="button" class="btn btn-success" (click)="formatearJuego()"> Inicio</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        Agregar Palabra
+      </button>
 
-    <div class=" row justify-content-center" *ngIf=principal>
-        <div class="col-6 text-right">
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Agregar Palabra</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                </div>
+                <div class="modal-body">
+                    <form class="col-md-12" method="post" action="" #formPalabra="ngForm">
+                        <div class="form-group row">
+                            <label for="pingles" class="col-md-4">Ingles :</label>
+                            <input type="text" id="pingles" [(ngModel)]="nuevaPlabra.palabraIngles" class="form-control form-control-sm col-md-8" name="pingles" required />
+                        </div>
+                        <div class="form-group row">
+                            <label for="pespano;" class="col-md-4">Español :</label>
+                            <input type="text" id="pespanol" [(ngModel)]="nuevaPlabra.palabraEspanol" class="form-control form-control-sm col-md-8" name="pespanol" required />
+                        </div>
+                        <div class="form-group row">
+                            <label for="url" class="col-md-4">Url Imagen :</label>
+                            <input type="url" id="url" [(ngModel)]="nuevaPlabra.urlImagen" class="form-control form-control-sm col-md-8" name="url" required pattern="https://.*" />
+                        </div>
+                        <div class="form-group row">
+                            <label for="categoriaModal" class="col-md-4">Categoria :</label>
+                            <select id="categoriaModal" name="categoriaModal" [(ngModel)]="nuevaPlabra.categoria" (ngModelChange)="cargarListaPalabra()" class="form-control form-control-sm col-md-8" required>
+                            <option value="deporte" >Deporte</option>
+                            <option value="animal">Animales</option>
+                        </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="limpiarPalabraNueva()">Cancelar</button>
+                    <button type="button" class="btn btn-primary" (click)="AgregarPalabra()" [disabled]="formPalabra.invalid">Agregar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class=" row justify-content-center " *ngIf=principal>
+        <div class="col-6 text-right ">
             <h4>
-                <i class="far fa-heart"></i> {{vidas}}
+                <i class="far fa-heart "></i> {{vidas}}
             </h4>
         </div>
-        <div class="col-6">
+        <div class="col-6 ">
             <h4>
-                <i class="far fa-star"></i> {{puntaje}}
+                <i class="far fa-star "></i> {{puntaje}}
             </h4>
         </div>
 
-        <div class="text-center col-12 mt-1">
-            <img [src]="'../../../assets/img/' +palabra.urlImagen" class="img-thumbnail" width="50%" height="60%">
+        <div class="text-center col-12 mt-1 ">
+            <img [src]="palabra.urlImagen " class="img-thumbnail " width="50% " height="60% ">
         </div>
 
         <div class="col-md-1 mt-3 " *ngFor="let iter of palabraElegida;index as i ">
-            <input type="text" style="font-size: 30px;" class="form-control border border-dark" maxlength="1 " [(ngModel)]="palabraIngresada[i] " (ngModelChange)="validarLetraIngresada() ">
+            <input type="text " style="font-size: 30px; " class="form-control border border-dark " maxlength="1 " [(ngModel)]="palabraIngresada[i] " (ngModelChange)="validarLetraIngresada() ">
         </div>
     </div>
     <div class="row justify-content-center mt-4 border border-success " *ngIf=principal>

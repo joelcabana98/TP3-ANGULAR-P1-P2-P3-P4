@@ -1,35 +1,46 @@
 <div class="row justify-content-center">
-    <form class="col-md-7" method="post" action="">
+    <form class="col-md-7" method="post" action="" #formPunto="ngForm">
         <h2 class="text-center"> Asistente </h2>
         <div class="form-group row">
             <label for="idpara" class="col-md-4">Usuario :</label>
-            <input type="text" [(ngModel)]="asistente.usuario" id="idpara" class="form-control form-control-sm col-md-8" name="idpara" />
+            <input type="text" [(ngModel)]="constancia.usuario" id="idpara" class="form-control form-control-sm col-md-8" name="usuario" #usuario="ngModel" required/>
+        </div>
+        <div *ngIf="usuario.invalid && (usuario.dirty || usuario.touched)" class="alert alert-danger">
+
+            <div *ngIf="usuario.errors.required">
+                Este campo es requerido.
+            </div>
         </div>
         <div class="form-group row">
             <label for="idde" class="col-md-4">Nombre De Organización :</label>
-            <input type="text" [(ngModel)]="asistente.nombreOrganizacion" id="idde" class="form-control form-control-sm col-md-8" name="idde" />
+            <input type="text" [(ngModel)]="constancia.nombreOrganizacion" id="idde" class="form-control form-control-sm col-md-8" name="org" #org="ngModel" required />
+        </div>
+        <div *ngIf="org.invalid && (org.dirty || org.touched)" class="alert alert-danger">
+            <div *ngIf="org.errors.required">
+                Este campo es requerido.
+            </div>
         </div>
         <div class="form-group row">
             <!-- Default inline 1-->
             <label for="idde" class="col-md-4">Requiere Constancia? :</label>
             <div class="custom-control custom-radio custom-control-inline">
-                <input type="radio" value="true" [(ngModel)]="asistente.requiereConstancia" class="custom-control-input" id="defaultInline1" name="inlineDefaultRadiosExample">
+                <input type="radio" value="true" [(ngModel)]="constancia.requiereConstancia" class="custom-control-input" id="defaultInline1" name="inlineDefaultRadiosExample" required>
                 <label class="custom-control-label" for="defaultInline1">Si</label>
             </div>
 
             <!-- Default inline 2-->
             <div class="custom-control custom-radio custom-control-inline">
-                <input type="radio" value="false" [(ngModel)]="asistente.requiereConstancia" class="custom-control-input" id="defaultInline2" name="inlineDefaultRadiosExample">
+                <input type="radio" value="false" [(ngModel)]="constancia.requiereConstancia" class="custom-control-input" id="defaultInline2" name="inlineDefaultRadiosExample" required>
                 <label class="custom-control-label" for="defaultInline2">No</label>
             </div>
         </div>
 
         <div class="form-group text-center">
-            <button (click)="registrarAsistente()" class="btn btn-info ml-2 mr-2"><i class="fas fa-save fal"></i>Registrar</button>
+            <button (click)="guardarConstancia()" class="btn btn-info ml-2 mr-2" [disabled]="formPunto.invalid"><i class="fas fa-save fal"></i>  Registrar</button>
         </div>
     </form>
 
-    <table class="table table-striped table-responsive" [mfData]="asistentes" #mf="mfDataTable" [mfRowsOnPage]="3">
+    <table class="table table-striped table-responsive" [mfData]="listaConstancias" #mf="mfDataTable" [mfRowsOnPage]="10">
         <thead>
             <tr>
                 <th style="width: 20%">
@@ -41,13 +52,20 @@
                 <th style="width: 10%">
                     <mfDefaultSorter by="requiereConstancia">Requiere Constancia? </mfDefaultSorter>
                 </th>
+                <th style="width: 10%">
+                    <mfDefaultSorter by="requiereConstancia">Acciones</mfDefaultSorter>
+                </th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let item of mf.data">
                 <td>{{item.usuario | uppercase }}</td>
                 <td>{{item.nombreOrganizacion | uppercase }} </td>
-                <td>{{item.requiereConstancia | uppercase }}</td>
+                <td>{{item.requiereConstancia && 'Si' || 'No'}}</td>
+                <td>
+                    <button class="btn btn-primary" (click)="borrarConstancia(item)"><i class="far fa-trash-alt"></i></button>
+                    <button class="btn btn-primary" (click)="elegirConstancia(item)" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-edit"></i></button>
+                </td>
             </tr>
         </tbody>
         <tfoot>
@@ -58,4 +76,55 @@
             </tr>
         </tfoot>
     </table>
+</div>
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Editar Constancia</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>
+            <div class="modal-body">
+                <form class="col-md-12" method="post" action="">
+                    <div class="form-group row">
+                        <label for="idparaModal" class="col-md-4">Usuario :</label>
+                        <input type="text" [(ngModel)]="constancia.usuario" id="idparaModal" class="form-control form-control-sm col-md-8" name="idparaModal" />
+                    </div>
+                    <div class="form-group row">
+                        <label for="iddeModal" class="col-md-4">Nombre De Organización :</label>
+                        <input type="text" [(ngModel)]="constancia.nombreOrganizacion" id="iddeModal" class="form-control form-control-sm col-md-8" name="iddeModal" />
+                    </div>
+
+                    <!-- radio button-->
+                    <div class="form-group row">
+                        <!-- Default inline 1-->
+                        <label for="" class="col-md-4">Requiere Constancia? :</label>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" value="true" [checked]="true" [(ngModel)]="constancia.requiereConstancia" class="custom-control-input" id="defaultInline1Modal" name="inlineDefaultRadiosExample1Modal">
+                            <label class="custom-control-label" for="defaultInline1">Si</label>
+
+                        </div>
+                        <!-- Default inline 2-->
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" value="false" [(ngModel)]="constancia.requiereConstancia" class="custom-control-input" id="defaultInline2Modal" name="inlineDefaultRadiosExample2Modal">
+                            <label class="custom-control-label" for="defaultInline2">No</label>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="limpiarCampos()">Cancelar</button>
+                <button type="button" class="btn btn-primary" (click)="modificarConstancia()" data-dismiss="modal">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
 </div>

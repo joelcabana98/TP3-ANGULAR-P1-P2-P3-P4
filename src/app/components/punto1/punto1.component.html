@@ -1,57 +1,51 @@
 <div class="row justify-content-center">
-    <form class="col-md-5" method="post" action="">
+    <form class="col-md-5" method="post" action="" #formPunto="ngForm">
         <h2 class="text-center"> Enviar Mensaje </h2>
         <div class="form-group row">
             <label for="idpara" class="col-md-4">Para :</label>
-            <input type="number" [(ngModel)]="mensaje.para" id="idpara" class="form-control form-control-sm col-md-8" name="idpara" />
+            <input type="number" [(ngModel)]="mensaje.para" id="idpara" class="form-control form-control-sm col-md-8" name="idpara" #idpara="ngModel" required/>
         </div>
+        <div *ngIf="idpara.invalid && (idpara.dirty || idpara.touched)" class="alert alert-danger">
+
+            <div *ngIf="idpara.errors.required">
+                Este campo es requerido.
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="idempresa" class="col-md-4">Empresa</label>
+            <select id="idempresa" class="form-control form-control-sm col-md-8" required name="empresa" #empresa="ngModel" [(ngModel)]="mensaje.empresa" required>
+                <option *ngFor="let e of listaEmpresas" [ngValue]="e" >{{e.nombre}}</option>
+            </select>
+        </div>
+
+
         <div class="form-group row">
             <label for="idde" class="col-md-4">De :</label>
-            <input type="number" [(ngModel)]="mensaje.de" id="idde" class="form-control form-control-sm col-md-8" name="idde" />
+            <input type="number" [(ngModel)]="mensaje.de" id="idde" class="form-control form-control-sm col-md-8" name="idde" #idde="ngModel" required/>
         </div>
+        <div *ngIf="idde.invalid && (idde.dirty || idde.touched)" class="alert alert-danger">
+            <div *ngIf="idde.errors.required">
+                Este campo es requerido.
+            </div>
+        </div>
+
         <div class="form-group row">
             <label for="" class="col-md-4">Tu Mensaje :</label>
-            <textarea [(ngModel)]="mensaje.texto" [maxlength]="tamMax" (ngModelChange)="cambiarTamanioText()" class="form-control form-control-sm col-md-8" rows="5" name="txtTexto"> 
+            <textarea [(ngModel)]="mensaje.texto" [maxlength]="tamMax" (ngModelChange)="cambiarTamanioText()" class="form-control form-control-sm col-md-8" rows="5" name="txtTexto" #txtTexto="ngModel" required> 
             </textarea>
             <label class="" for="col-md-8">{{tamText}} Caracteres restantes</label>
         </div>
 
-        <div class="form-group text-center">
-            <button class=" btn btn-info ml-2 mr-2" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-save fal "></i>Enviar</button>
-            <button class="btn btn-secondary ml-2 mr-2" (click)="limpiarMensaje()"><i class="fas fa-brush "></i> Limpiar</button>
-        </div>
+        <div *ngIf="txtTexto.invalid && (txtTexto.dirty || txtTexto.touched)" class="alert alert-danger">
 
-
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Resumen de Mensaje</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                             <span aria-hidden="true">&times;</span>
-                     </button>
-                    </div>
-                    <div class="modal-body">
-                        <form class="col-md-12" method="post" action="">
-
-                            <div class="form-group row">
-                                <label for="idpara" class="col-md-2">Para :</label> {{mensaje.para}}
-                            </div>
-                            <div class="form-group row">
-                                <label for="idde" class="col-md-2">De : </label>{{mensaje.de}}
-                            </div>
-                            <div class="form-group row">
-                                <label for="idde" class="col-md-4">Mensaje : </label>{{mensaje.texto}}
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
+            <div *ngIf="txtTexto.errors.required">
+                Este campo es requerido.
             </div>
         </div>
-        <!--fin del Modal-->
+
+        <div class="form-group text-center">
+            <button class=" btn btn-info ml-2 mr-2" (click)="guardarConstancia()" [disabled]="formPunto.invalid"><i class="fas fa-save fal "></i>Enviar</button>
+            <button class="btn btn-secondary ml-2 mr-2" (click)="limpiarMensaje()"><i class="fas fa-brush "></i> Limpiar</button>
+        </div>
     </form>
 </div>

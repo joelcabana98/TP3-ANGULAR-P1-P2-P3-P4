@@ -1,18 +1,18 @@
 <div class="row justify-content-center">
 
-    <form class="col-md-5" method="post" action="">
+    <form class="col-md-5" method="post" action="" #formPasaje="ngForm">
         <h2 class="text-center"> GESTION DE PASAJES </h2>
         <div class="form-group row">
             <label for="iddni" class="col-md-4">DNI Pasajero :</label>
-            <input id="iddni" class="form-control form-control-sm col-md-8" type="number" name="iddni" [(ngModel)]="pasaje.dniPasajero" />
+            <input id="iddni" class="form-control form-control-sm col-md-8" type="number" name="iddni" [(ngModel)]="pasaje.dniPasajero" #iddnir="ngModel" required/>
         </div>
         <div class="form-group row">
             <label for="idprecio" class="col-md-4">Precio de Pasaje :</label>
-            <input id="idprecio" class="form-control form-control-sm col-md-8" type="number" name="idprecio" [(ngModel)]="pasaje.precioPasaje" (ngModelChange)="realizarDescuento()" />
+            <input id="idprecio" class="form-control form-control-sm col-md-8" type="number" name="idprecio" [(ngModel)]="pasaje.precioPasaje" (ngModelChange)="realizarDescuento()" #idprecio="ngModel" required/>
         </div>
         <div class="form-group row">
             <label for="categoria" class="col-md-4">Categoria de Pasajero :</label>
-            <select id="categoria" name="categoria" [(ngModel)]="pasaje.categoriaPasajero" (ngModelChange)="realizarDescuento()" class="form-control form-control-sm col-md-8">
+            <select id="categoria" name="categoria" [(ngModel)]="pasaje.categoriaPasajero" (ngModelChange)="realizarDescuento()" class="form-control form-control-sm col-md-8" #categoria="ngModel" required>
                 <option value="m" >Menor</option>
                 <option value="a">Adulto</option>
                 <option value="j">Jubilado</option>
@@ -22,55 +22,116 @@
             <label class="col-md-4">Precio Pasaje con Descuento :</label>
             <label class="col-md-4 form-control form-control-sm col-md-8">{{precioConDescuento}}</label>
         </div>
-        <div class="form-group text-center ">
-            <button class="btn btn-secondary ml-2 mr-2 " (click)="guardarPasaje() "><i class="fas fa-save fal "></i> Guardar</button>
-            <button class="btn btn-secondary ml-2 mr-2 " (click)="limpiar() "><i class="fas fa-brush "></i> Limpiar</button>
-            <button class="btn btn-secondary ml-2 mr-2 " (click)="modificarPasaje() "><i class="fas fa-edit"></i>
+
+        <div class=" form-group text-center ">
+            <button class="btn btn-secondary ml-2 mr-2 " (click)="guardarPasaje() " [disabled]="formPasaje.invalid"><i class="fas fa-save fal "></i> Guardar</button>
+            <button class="btn btn-secondary ml-2 mr-2 " (click)="limpiar()" [disabled]="formPasaje.invalid"><i class="fas fa-brush "></i> Limpiar</button>
+            <button class="btn btn-secondary ml-2 mr-2 " (click)="modificarPasaje() " [disabled]="formPasaje.invalid"><i class="fas fa-edit "></i>
                 Modificar</button>
         </div>
+
+
+
+    </form>
+    <form class="col-md-5" method="post" action="" #formAdelanto="ngForm">
+        <h2 class="text-center"> Adelanto </h2>
+        <div class="form-group row">
+            <label for="idcobrador" class="col-md-4">Cobrador :</label>
+            <input id="idcobrador" class="form-control form-control-sm col-md-8" type="text" name="idcobrador" [(ngModel)]="adelanto.cobrador" #idcobrador="ngModel" required/>
+        </div>
+        <div *ngIf="idcobrador.invalid && (idcobrador.dirty || idcobrador.touched)" class="alert alert-danger">
+
+            <div *ngIf="idcobrador.errors.required">
+                Este campo es requerido.
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="idmonto" class="col-md-4">Monto :</label>
+            <input id="idmonto" class="form-control form-control-sm col-md-8" type="number" name="idmonto" [(ngModel)]="adelanto.montoAdelanto" #idmonto="ngModel" required />
+        </div>
+        <div *ngIf="mensajeError" class="alert alert-danger">
+
+            <div>
+                El monto de adelanto es superior.
+            </div>
+        </div>
+
+        <div *ngIf="idmonto.invalid && (idmonto.dirty || idmonto.touched)" class="alert alert-danger">
+
+            <div *ngIf="idmonto.errors.required">
+                Este campo es requerido.
+            </div>
+        </div>
+
+        <div class=" form-group text-center ">
+            <button class="btn btn-secondary ml-2 mr-2 " (click)="agregarAdelanto()" [disabled]="formAdelanto.invalid"><i class="fas fa-save fal "></i>  Agregar</button>
+        </div>
+
+
     </form>
 
 
-    <table class="table table-striped" [mfData]="listaPasajes" #mf="mfDataTable" [mfRowsOnPage]="5">
+    <table class="table ">
+        <thead class="thead-dark ">
+            <tr>
+                <th scope="col ">Fecha</th>
+                <th scope="col ">Cobrador</th>
+                <th scope="col ">Monto</th>
+                <th scope="col ">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of pasaje.adelantos">
+                <th>{{item.fecha | date:'dd/MM/yyyy '}}</th>
+                <td>{{item.cobrador}}</td>
+                <td>{{item.montoAdelanto}}</td>
+                <td>
+                    <button class="btn btn-danger ml-1 " (click)="elimiarAdelanto(item)"><i class="far fa-trash-alt "></i></button>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+
+
+    <h5 class="mt-4 ">Lista de Pasajes</h5>
+    <table class="table table-striped" [mfData]="listaPasajes" #mf="mfDataTable" [mfRowsOnPage]="5 ">
         <thead>
             <tr>
-                <th style="width: 10%">
-                    <mfDefaultSorter by="idPasaje">Id</mfDefaultSorter>
-                </th>
                 <th style="width: 20%">
-                    <mfDefaultSorter by="dniPasajero">Dni Pasajero</mfDefaultSorter>
+                    <mfDefaultSorter by="dniPasajero ">Dni Pasajero</mfDefaultSorter>
                 </th>
-                <th style="width: 20%">
-                    <mfDefaultSorter by="precioPasaje">Precio Pasaje</mfDefaultSorter>
+                <th style="width: 20% ">
+                    <mfDefaultSorter by="precioPasaje ">Precio Pasaje</mfDefaultSorter>
                 </th>
-                <th style="width: 20%">
-                    <mfDefaultSorter by="categoriaPasajero">Categoria Pasajero</mfDefaultSorter>
+                <th style="width: 20% ">
+                    <mfDefaultSorter by="categoriaPasajero ">Categoria Pasajero</mfDefaultSorter>
                 </th>
-                <th style="width: 20%">
-                    <mfDefaultSorter by="fechaCompra">Fecha Compra</mfDefaultSorter>
+                <th style="width: 20% ">
+                    <mfDefaultSorter by="fechaCompra ">Fecha Compra</mfDefaultSorter>
                 </th>
-                <th style="width: 20%">
+                <th style="width: 20% ">
                     <mfDefaultSorter>Acciones</mfDefaultSorter>
                 </th>
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let p of mf.data">
-                <th>{{p.idPasaje}}</th>
+            <tr *ngFor="let p of mf.data ">
                 <td>{{p.dniPasajero}}</td>
                 <td>{{p.precioPasaje | currency}}</td>
                 <td>{{p.categoriaPasajero | uppercase}}</td>
                 <td>{{p.fechaCompra | date:'dd/MM/yyyy '}}</td>
                 <td>
-                    <button class="btn btn-success " (click)="elegirPasaje(p) "><i class="fas fa-check"></i>                       </button>
-                    <button class="btn btn-danger ml-1 " (click)="borrarPasaje(p) "><i class="far fa-trash-alt"></i></button>
+                    <button class="btn btn-success " (click)="elegirPasaje(p) "><i class="fas fa-check "></i>                       </button>
+                    <button class="btn btn-danger ml-1 " (click)="borrarPasaje(p) "><i class="far fa-trash-alt "></i></button>
                 </td>
             </tr>
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="6">
-                    <mfBootstrapPaginator [rowsOnPageSet]="[5,10,25]"></mfBootstrapPaginator>
+                <td colspan="6 ">
+                    <mfBootstrapPaginator [rowsOnPageSet]="[5,10,25] "></mfBootstrapPaginator>
                 </td>
             </tr>
         </tfoot>
@@ -78,40 +139,41 @@
 
 
 </div>
+<!--
 <div>
-    <h2 class="text-center"> Resumen de Pasaje </h2>
-    <div class="form-group row">
-        <label for="categoriafiltrado" class="col-md-1">Filtrar :</label>
-        <select id="categoriafiltrado" name="categoriafiltrado" [(ngModel)]="filtro" (ngModelChange)="filtrarPasajes()" class="form-control form-control-sm col-md-2">
-            <option value="t" >Todos</option>
-            <option value="m" >Menor</option>
-            <option value="a">Adulto</option>
-            <option value="j">Jubilado</option>
+    <h2 class="text-center "> Resumen de Pasaje </h2>
+    <div class="form-group row ">
+        <label for="categoriafiltrado " class="col-md-1 ">Filtrar :</label>
+        <select id="categoriafiltrado " name="categoriafiltrado " [(ngModel)]="filtro " (ngModelChange)="filtrarPasajes() " class="form-control form-control-sm col-md-2 ">
+            <option value="t " >Todos</option>
+            <option value="m " >Menor</option>
+            <option value="a ">Adulto</option>
+            <option value="j ">Jubilado</option>
         </select>
-        <label class="col-md-3">Precio General : {{precioTotal | currency}}</label>
+        <label class="col-md-3 ">Precio General : {{precioTotal | currency}}</label>
     </div>
-    <table class="table table-striped" [mfData]="listaFiltrada" #mf="mfDataTable" [mfRowsOnPage]="5">
+    <table class="table table-striped " [mfData]="listaFiltrada " #mf="mfDataTable " [mfRowsOnPage]="5 ">
         <thead>
             <tr>
-                <th style="width: 10%">
-                    <mfDefaultSorter by="idPasaje">Id</mfDefaultSorter>
+                <th style="width: 10% ">
+                    <mfDefaultSorter by="idPasaje ">Id</mfDefaultSorter>
                 </th>
-                <th style="width: 20%">
-                    <mfDefaultSorter by="dniPasajero">Dni Pasajero</mfDefaultSorter>
+                <th style="width: 20% ">
+                    <mfDefaultSorter by="dniPasajero ">Dni Pasajero</mfDefaultSorter>
                 </th>
-                <th style="width: 20%">
-                    <mfDefaultSorter by="precioPasaje">Precio Pasaje</mfDefaultSorter>
+                <th style="width: 20% ">
+                    <mfDefaultSorter by="precioPasaje ">Precio Pasaje</mfDefaultSorter>
                 </th>
-                <th style="width: 20%">
-                    <mfDefaultSorter by="categoriaPasajero">categoriaPasajero</mfDefaultSorter>
+                <th style="width: 20% ">
+                    <mfDefaultSorter by="categoriaPasajero ">categoriaPasajero</mfDefaultSorter>
                 </th>
-                <th style="width: 20%">
-                    <mfDefaultSorter by="fechaCompra">Fecha Compra</mfDefaultSorter>
+                <th style="width: 20% ">
+                    <mfDefaultSorter by="fechaCompra ">Fecha Compra</mfDefaultSorter>
                 </th>
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let f of listaFiltrada">
+            <tr *ngFor="let f of listaFiltrada ">
                 <th>{{f.idPasaje}}</th>
                 <td>{{f.dniPasajero}}</td>
                 <td>{{f.precioPasaje | currency}}</td>
@@ -121,10 +183,10 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="6">
-                    <mfBootstrapPaginator [rowsOnPageSet]="[5,10,25]"></mfBootstrapPaginator>
+                <td colspan="6 ">
+                    <mfBootstrapPaginator [rowsOnPageSet]="[5,10,25] "></mfBootstrapPaginator>
                 </td>
             </tr>
         </tfoot>
     </table>
-</div>
+</div>-->

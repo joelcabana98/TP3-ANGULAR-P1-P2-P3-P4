@@ -1,5 +1,6 @@
 export class Palabra {
-    
+  
+_id:string;    
 palabraIngles:string;
 palabraEspanol:string;
 urlImagen:string;

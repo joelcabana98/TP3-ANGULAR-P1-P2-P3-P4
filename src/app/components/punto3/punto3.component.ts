@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Pasaje } from '../../models/pasaje';
 import { PasajeService } from 'src/app/service/pasaje.service';
+import { Adelanto } from 'src/app/models/adelanto';
 
 @Component({
   selector: 'app-punto3',
@@ -10,59 +11,122 @@ import { PasajeService } from 'src/app/service/pasaje.service';
 export class Punto3Component implements OnInit {
    pasaje:Pasaje;
    listaPasajes:Array<Pasaje>;
+   adelanto:Adelanto;
+
 
 
    precioConDescuento:number;
-   filtro:string;
-   listaFiltrada:Array<Pasaje>;
-   precioTotal:number;
    mostrar:boolean;
+   mensajeError:boolean;
 
   constructor(private pasajeService:PasajeService) {
     this.pasaje = new Pasaje();
+    this.pasaje.adelantos = new Array<Adelanto>();
     this.listaPasajes = new Array<Pasaje>();
+    this.adelanto = new Adelanto();
     this.refrescarPasajes();
 
-    this.listaFiltrada = new Array<Pasaje>();
     this.mostrar = false;
+    this.mensajeError = false;
    }
+
+
+   guardarPasaje(){
+     this.pasaje.fechaCompra = new Date();
+     this.pasaje.precioPasaje = this.precioConDescuento;
+
+     console.log("metodo guardar pasaje");
+    this.pasajeService.addPasaje(this.pasaje).subscribe(
+     (result)=>{
+        alert("Pasaje Guardado");
+       this.refrescarPasajes();
+     }, 
+   (error)=>{
+        console.log("error"+ error);
+   });
+   this.pasaje = new Pasaje();
+ }
+
+
+ refrescarPasajes(){
+   console.log("REFRESCANDO......");
+   this.listaPasajes = new Array<Pasaje>();
+   this.pasajeService.getPasajes().subscribe(
+     (result)=>{
+       var pasa: Pasaje = new Pasaje();
+       result.forEach(element => {
+         Object.assign(pasa,element);
+         this.listaPasajes.push(pasa);
+         pasa = new Pasaje();
+         });
+     },
+     (error)=>{
+       console.log(error);
+     }
+   )
+ }
+
+ borrarPasaje(pasaje:Pasaje){  
+   this.pasajeService.deletePasaje(pasaje).subscribe(
+     (result)=>{
+       alert("Pasaje Eliminada");
+       this.refrescarPasajes();
+     },
+     (error)=>{
+       console.log(error);
+     }
+   );
+
+  // this.refrescarPuntos();
+ }
+
+
+ modificarPasaje(){
+   this.pasajeService.updatePasaje(this.pasaje).subscribe(
+     (result)=>{
+         alert("Pasaje Modificado");
+         this.refrescarPasajes();
+     },
+     (error)=>{
+       console.log(error);
+     }
+   );
+   this.pasaje = new Pasaje();
+   //this.refrescarPuntos();
+ }
+
+ 
+
+
+ agregarAdelanto(){
+   var montoTotal =0 ;
+    this.adelanto.fecha = new Date();
+   for(var i =0 ; i< this.pasaje.adelantos.length;i++){
+         montoTotal = montoTotal + this.pasaje.adelantos[i].montoAdelanto;
+   }
+
+   if(( montoTotal + this.adelanto.montoAdelanto) <= this.pasaje.precioPasaje){
+          this.pasaje.adelantos.push(this.adelanto);
+          this.adelanto = new Adelanto();
+          this.modificarPasaje();
+          this.mensajeError = false;
+   }else {
+    this.mensajeError = true;
+   }
+ }
+
+ elimiarAdelanto(adelanto:Adelanto){
+   var indice = this.pasaje.adelantos.findIndex((element)=> element._id == adelanto._id);
+   this.pasaje.adelantos.splice(indice,1);
+   
+   this.modificarPasaje();
+ }
+
 
   ngOnInit(): void {
   }
 
-  /**en un array agrega los objetos que cumplan con la cateogira de pasaje seleccionada */
-  filtrarPasajes(){
-    this.precioTotal = null;
-    this.listaFiltrada = new Array<Pasaje>();
-     switch (this.filtro) {
-                case "m":
-                  this.filtroRecorrido(this.filtro);     
-                    break;
-                case "a":
-                  this.filtroRecorrido(this.filtro);
-                    break;
-                case "j":
-                  this.filtroRecorrido(this.filtro);
-                    break;
-                default:
-                  this.listaFiltrada = this.listaPasajes;
-                  for(var i=0;i< this.listaPasajes.length;i++){
-                    this.precioTotal += this.listaPasajes[i].precioPasaje;
-                  };
-                  break;
-   }           
-  }
-
-  filtroRecorrido(id:string){
-    for(var i=0;i< this.listaPasajes.length;i++){
-      if(this.listaPasajes[i].categoriaPasajero == id){
-        this.listaFiltrada.push(this.listaPasajes[i]);
-        this.precioTotal +=this.listaPasajes[i].precioPasaje;
-      }           
-     }
-
-  }
-
+  
   /**asigna un valor a la variable que se usa en el ngIf */
   mostrarTotalDescuento(){
    if( (this.pasaje.precioPasaje != null) &&(this.pasaje.categoriaPasajero != null)){
@@ -70,10 +134,6 @@ export class Punto3Component implements OnInit {
    }else{
      this.mostrar=false;
    }
-  }
-
-  refrescarPasajes(){
-    this.listaPasajes = this.pasajeService.getPasaje();
   }
 
   realizarDescuento(){
@@ -91,30 +151,18 @@ export class Punto3Component implements OnInit {
      }
   }
 
-  guardarPasaje(){
-    this.pasaje.precioPasaje = this.precioConDescuento;
-    this.pasaje.fechaCompra = new Date();
-    this.pasajeService.addPasaje(this.pasaje);
-     this.limpiar();
-    this.refrescarPasajes();
-  }
-
   elegirPasaje(pasaje:Pasaje){
-    this.pasaje = pasaje;
+    var tpasaje = new Pasaje();
+    Object.assign(tpasaje,pasaje);
+    this.pasaje = tpasaje;
   }
 
-  borrarPasaje(pasaje:Pasaje){
-    this.pasajeService.deletePasaje(pasaje);
-  }
-
-  modificarPasaje(){
-   this.pasajeService.updatePasaje(this.pasaje);
-  }
 
   limpiar(){
     this.pasaje = new Pasaje();
     this.precioConDescuento = null;
     this.mostrar = false;
   }
+
 
 }

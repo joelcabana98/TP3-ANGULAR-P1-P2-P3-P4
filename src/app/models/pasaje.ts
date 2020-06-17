@@ -1,18 +1,20 @@
+import { Adelanto } from './adelanto';
+
 export class Pasaje {
- idPasaje:number;
- dniPasajero:number;
- precioPasaje:number;
- categoriaPasajero:string;
- fechaCompra:Date;
 
+    _id:string;
+  dniPasajero:number;
+  precioPasaje:number;
+  categoriaPasajero:string;
+  fechaCompra:Date;
+  adelantos: Array<Adelanto> = new Array<Adelanto>();
 
- Pasaje(idPasaje:number,dniPasajero:number,precioPasaje:number,categoriaPasajero:string,fechaCompra:Date){
-     this.idPasaje= idPasaje;
-     this.dniPasajero = dniPasajero;
-     this.precioPasaje = precioPasaje;
-     this.categoriaPasajero = categoriaPasajero;
-     this.fechaCompra = fechaCompra;
- }
+  constructor(dniPasajero?:number,precioPasaje?:number,categoriaPasajero?:string,fechaCompra?:Date){
+      this.dniPasajero = dniPasajero;
+      this.precioPasaje = precioPasaje;
+      this.categoriaPasajero = categoriaPasajero;
+      this.fechaCompra = fechaCompra;
+  }
 
 
 }
